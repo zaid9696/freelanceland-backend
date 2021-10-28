@@ -21,8 +21,11 @@ const userSchema = new mongoose.Schema({
 	},
 	role: {
 		type: String,
-		enum: ['freelance', 'client'],
-		default: 'freelance'
+		required: [true, 'Please choice the account type'],
+		enum: {
+			values: ['freelancer', 'client'],
+			message: `This value {VALUE} is not accepted. Please choice freelancer or client`
+		},
 	},
 	photo: {
 		type: String,
@@ -43,6 +46,8 @@ const userSchema = new mongoose.Schema({
 }
 );
 
+
+
 userSchema.index({userName: 1});
 
 // Removing White Spaces From UserName;
@@ -62,7 +67,12 @@ userSchema.pre('save', async function(next){
 
 	next();
 
-})
+});
+
+userSchema.methods.correctPassword = async (possiblePassword, password) => {
+
+	return await bcrypt.compare(possiblePassword, password);
+}
 
 
 

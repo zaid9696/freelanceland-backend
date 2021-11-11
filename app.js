@@ -8,43 +8,55 @@ const compression = require('compression');
 const AppError  = require('./utils/appError');
 const errorController = require('./controllers/errorController');
 const userRoutes = require('./routes/userRoutes');
+const bundleRoutes = require('./routes/bundleRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const session = require('express-session')
 
 const app = express();
 
+var sess = {
+  saveUninitialized: false,
+  resave: false,
+  secret: 'very secret 12345',
+  cookie: {
+    secure: false,
+  }
+}
 
 
 
 app.use(morgan('dev'));
 
+app.use(cookieParser());
 
 app.use((req, res, next) => {
 
-	res.setHeader('Access-Control-Allow-Origin', process.env.URL_PATH);
-	res.header('Access-Control-Allow-Credentials', true);
+	res.setHeader('Access-Control-Allow-Credentials', true);
+	res.setHeader('Access-Control-Allow-Origin', `${process.env.URL_PATH}`);
 	res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
 
 	next();
 });
 
-// const corsOptions = {
-//     credentials: true,
-//     ///..other options
-//   };
+const corsOptions = {
+    credentials: true,
+   	origin: `${process.env.URL_PATH}`
+ };
 
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use(express.json({limit: '10kb'}));
-app.use(cookieParser());
 app.use(express.urlencoded({
 	extended: true,
 	limit: '10px'
 }));
 
-
-
+app.use(session(sess))
 
 app.use('/api/users', userRoutes);
+app.use('/api/bundles', bundleRoutes);
+app.use('/api/orders', orderRoutes);
 
 
 app.all('*', (req, res, next) => {

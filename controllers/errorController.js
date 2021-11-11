@@ -1,7 +1,12 @@
 const AppError = require('../utils/AppError');
 
-const duplicateErrorHandler = (err) => {
 
+const objectIdErrorHandler = (err) => {
+
+	return new AppError('You are not allowed to access the content', 401);
+}
+
+const duplicateErrorHandler = (err) => {
 
 	const val = Object.values(err.keyValue);
 	const field = Object.keys(err.keyValue);
@@ -68,6 +73,7 @@ module.exports = (err, req, res, next) => {
 
 		if(err.code === 11000) err = duplicateErrorHandler(err);
 		if(err.name === 'ValidationError') err = validationHandler(err);
+		if(err.kind === 'ObjectId') err = objectIdErrorHandler(err);
 
 		sendErrorPro(req, res, err);
 	}

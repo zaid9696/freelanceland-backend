@@ -28,10 +28,6 @@ const createToken = (user, statusCode, req, res) => {
 		httpOnly: true
 	}
 
-	res.header('Access-Control-Allow-Origin', process.env.URL_PATH);
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	res.header( 'Access-Control-Allow-Credentials',true);
-
 
 	res.cookie('jwt', token, cookieOptions);
 
@@ -94,9 +90,9 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
+
 	if(req.cookies.jwt){
-
-
+	
 		try {
 
 			const tokenDecoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
@@ -145,5 +141,37 @@ exports.logout = catchAsync(async (req, res, next) => {
 
 	res.status(200).json({status: 'success'});
 
+
+});
+
+
+exports.protect = catchAsync(async (req, res, next) => {
+
+		let token;
+		// console.log(req.cookies.jwt)
+		if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+
+			token = req.headers.authorization.split(' ')[1];
+		}
+		else if(req.cookies.jwt){
+			token = req.cookies.jwt;
+		}
+
+		if(!token){
+
+			next(new AppError('You are not logged in. Please login', 401))
+
+		}
+
+		const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+		 const user = await User.findById(decoded.id);	
+
+		 if(!user){
+		 	return next(new AppError('This user no longer exist', 400));
+		 }
+
+		 req.user = user;
+		 next();
 
 })

@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 
 
-
 const orderSchema = new mongoose.Schema({
 
 	createdAt: {
@@ -26,6 +25,7 @@ const orderSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	deliveredDesc: String,
 	accepted: {
 		type: Boolean,
 		default: false

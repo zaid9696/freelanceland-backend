@@ -8,11 +8,12 @@ const AppError = require('../utils/AppError');
 exports.updateOrder = catchAsync(async (req, res, next) => {
 
 		const {orderId} = req.params;
-		const {accepted, notAccepted, completed, cancelled, delivered} = req.body;
+		const {accepted, notAccepted, completed, cancelled, delivered, deliveredDesc, active} = req.body;
 		const updatedOrderClient = {
 			accepted,
 			notAccepted,
 			completed,
+			active,
 			timeStampBuyer: new Date(Date.now())
 
 		}
@@ -20,28 +21,41 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 		const updatedOrderSeller = {
 			cancelled,
 			delivered,
-			timeStampSeller: new Date(Date.now())
+			deliveredDesc,
+			active,
+			notAccepted,
+			timeStampBuyer: notAccepted ? new Date(Date.now()) : undefined,
+			timeStampSeller: !notAccepted ? new Date(Date.now()) : undefined
 		}
 
 		const isOrder = await Order.findById(orderId);
-		let order 
+		let order ;
+		let isUser;
 		if(isOrder.user.toString() === req.user.id){
 		
 			 order = await Order.findByIdAndUpdate(orderId, updatedOrderClient, {
 				new: true
 			});
+			isUser = true;
 		}else if(isOrder.seller.toString() === req.user.id) {
 
 			
+			if(!deliveredDesc && !cancelled && !notAccepted){
+
+				return next(new AppError('You must provide a MESSAGE for the Buyer'));
+			}
+
 			order = await Order.findByIdAndUpdate(orderId, updatedOrderSeller, {
 				new: true
 			});
+			isUser = false
 		}
 
 		
 		res.status(200).json({
 			status: 'success',
-			order
+			order,
+			isUser: isUser
 		})
 })
 
@@ -69,6 +83,27 @@ exports.getOneOrder = catchAsync(async (req, res, next) => {
 			   ]
 			}).populate({path: 'bundle'});
 
+		const {deliverDate} = order;
+
+		const newDate = new Date(Date.now());
+		const endDate = new Date(deliverDate);
+		const timeRemaining = endDate.getTime() - newDate.getTime();
+
+		// let expiredTime = false;
+		// if(timeRemaining < 0){
+		// 	expiredTime = true;
+		// }
+
+		let isUser;
+
+		if (order.user.toString() === req.user.id) {
+
+			isUser = true;
+		}else {
+
+			isUser = false;
+		}
+
 		if(!order){
 
 		  return next(new AppError('The user is not authorized to access the page',401))
@@ -77,7 +112,8 @@ exports.getOneOrder = catchAsync(async (req, res, next) => {
 		res.status(200).json({
 			status: 'success',
 			order,
-
+			isUser,
+			// expiredTime
 		});
 }) 
 

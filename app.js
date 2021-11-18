@@ -10,18 +10,10 @@ const errorController = require('./controllers/errorController');
 const userRoutes = require('./routes/userRoutes');
 const bundleRoutes = require('./routes/bundleRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const session = require('express-session')
+const messageRoutes = require('./routes/messageRoutes');
+
 
 const app = express();
-
-var sess = {
-  saveUninitialized: false,
-  resave: false,
-  secret: 'very secret 12345',
-  cookie: {
-    secure: false,
-  }
-}
 
 
 
@@ -52,11 +44,11 @@ app.use(express.urlencoded({
 	limit: '10px'
 }));
 
-app.use(session(sess))
 
 app.use('/api/users', userRoutes);
 app.use('/api/bundles', bundleRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/messages', messageRoutes);
 
 
 app.all('*', (req, res, next) => {

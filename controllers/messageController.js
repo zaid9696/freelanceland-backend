@@ -1,36 +1,42 @@
 const Message = require('../models/messageModal');
+const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 
 
 
 
+exports.getMessageByUserName = catchAsync(async (req, res, next) => {
 
-exports.postMessage = catchAsync(async (req, res, next) => {
+		const {userName} = req.params;
+		const user = await User.findOne({userName}).select('userName');
+		console.log(user);
+		const messages = await Message.find({
+			$and: [
+				{$or: [{sender: user.id}, {receiver: user.id}]},
+				{$or: [{sender: req.user.id}, {receiver: req.user.id}]}
+			]
+		}).populate('sender receiver', 'userName');
 
-		const newMessage = await Message.create(req.body);
-	
-		const io = req.app.get('socketio');
-
-		io.emit('message', req.body);
-		
-		res.status(201).json({
-			status: 'success',
-			newMessage
-		})
-
-})
-
-exports.getMessage = catchAsync(async (req, res, next) => {
-
-
-		const message = await Message.find();
 		
 		res.status(200).json({
 			status: 'success',
-			message
-		})
+			messages,
+			user
+		});
+
+})
+
+// exports.getMessage = catchAsync(async (req, res, next) => {
+
+
+// 		const message = await Message.find();
+		
+// 		res.status(200).json({
+// 			status: 'success',
+// 			message
+// 		})
 
 		
 
-})
+// })

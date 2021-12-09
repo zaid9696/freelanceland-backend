@@ -46,7 +46,7 @@ const createToken = (user, statusCode, req, res) => {
 
 exports.signUp = catchAsync(async (req, res, next) => {
 
-	const {userName, email, password, firstName, lastName, skills, aboutMe, role} = req.body;
+	const {userName, email, password, firstName, lastName, skills, aboutMe, role, countryCode, localTimeZone, lastSeen} = req.body;
 
 	// console.log(firstName)
 	const newUser = await User.create({
@@ -57,6 +57,9 @@ exports.signUp = catchAsync(async (req, res, next) => {
 		skills,
 		aboutMe,
 		role,
+		countryCode,
+		localTimeZone,
+		lastSeen,
 		password
 	});
 
@@ -111,6 +114,10 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 			}
 
 			const user = await User.findById(tokenDecoded.id);
+
+			if(!user){
+				next(new AppError('The user with this token no longer exist', 401));
+			}
 
 			return res.status(200).json({
 				status: 'success',

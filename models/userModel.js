@@ -38,7 +38,10 @@ const userSchema = new mongoose.Schema({
 		select: false
 	},
 	skills: [String],
-	aboutMe: String
+	aboutMe: String,
+	lastSeen: Date,
+	countryCode: String,
+	localTimeZone: String
 },
 {
 	toJSON: {virtuals: true},

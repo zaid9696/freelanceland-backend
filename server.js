@@ -14,7 +14,6 @@ const io = require('socket.io')(httpServer, {
   }
 });
 
-
 const db = process.env.DATABASE;
 
 mongoose.connect(db).then(con => console.log('MongoDB Connection Successfully'))
@@ -24,6 +23,23 @@ const port = process.env.HOST_PORT || 5000;
 
 const users = {};
 io.sockets.on('connection', (socket) =>{
+
+
+	socket.on('notifications', async (newNotification) => {
+
+		io.sockets.emit('notifications', newNotification);
+
+	});
+
+
+
+	socket.on('orders', async (updatedOrder) => {
+
+		console.log({updatedOrder});
+
+		io.sockets.emit('orders', updatedOrder);
+
+	});
 
 
 	 socket.on('updatedMessage', async (messIds) => {

@@ -1,9 +1,118 @@
 const {promisify} = require('util');
 const jwt = require('jsonwebtoken');
+const paypal = require("@paypal/checkout-server-sdk")
+const Bundle =  require('../models/bundleModel');
+
+const Environment = paypal.core.SandboxEnvironment;
+const paypalClient = new paypal.core.PayPalHttpClient(
+  new Environment(
+    process.env.PAYPAL_CLIENT_ID,
+    process.env.PAYPAL_CLIENT_SECRET
+  )
+)
 
 const Order  = require('../models/orderModel');
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/AppError');
+
+
+
+	// const storeItems = new Map([
+	// 	  [1, { price: 100, name: "Learn React Today" }],
+	// 	  [2, { price: 200, name: "Learn CSS Today" }],
+	// 	])	
+
+
+	// 	const request = new paypal.orders.OrdersCreateRequest()
+ //  		const total = req.body.items.reduce((sum, item) => {
+	//     return sum + storeItems.get(item.id).price * item.quantity
+	//   }, 0)
+	//   request.prefer("return=representation")
+	//   request.requestBody({
+	//     intent: "CAPTURE",
+	//     purchase_units: [
+	//       {
+	//         amount: {
+	//           currency_code: "USD",
+	//           value: total,
+	//           breakdown: {
+	//             item_total: {
+	//               currency_code: "USD",
+	//               value: total,
+	//             },
+	//           },
+	//         },
+	//         items: req.body.items.map(item => {
+	//           const storeItem = storeItems.get(item.id)
+	//           return {
+	//             name: storeItem.name,
+	//             unit_amount: {
+	//               currency_code: "USD",
+	//               value: storeItem.price,
+	//             },
+	//             quantity: item.quantity,
+	//           }
+	//         }),
+	//       },
+	//     ],
+	//   })
+
+	//   try {
+	//     const order = await paypalClient.execute(request)
+	//     res.json({ id: order.result.id })
+	//   } catch (e) {
+	//     res.status(500).json({ error: e.message })
+	//   }
+
+
+
+exports.processingPaymentPayPal = catchAsync(async (req, res, next) => {
+
+		const {id} = req.body.items;	
+
+		const bundle = await Bundle.findById(id);
+
+
+	if(bundle){
+
+		const request = new paypal.orders.OrdersCreateRequest()	
+		  request.prefer("return=representation")
+		  request.requestBody({
+		    intent: "CAPTURE",
+		    purchase_units: [
+		      {
+		        amount: {
+		          currency_code: "USD",
+		          value: bundle.price,
+		          breakdown: {
+		            item_total: {
+		              currency_code: "USD",
+		              value: bundle.price,
+		            },
+		          },
+		        },
+		        items: [{
+		            name: bundle.title,
+		            unit_amount: {
+	              currency_code: "USD",
+	              value: bundle.price,
+	            },
+	            quantity: 1,
+		          }],
+		      },
+		    ],
+		  })
+	
+
+		  try {
+		    const order = await paypalClient.execute(request)
+		    res.json({ id: order.result.id })
+		  } catch (e) {
+		    res.status(500).json({ error: e.message })
+		  }}
+
+
+})
 
 exports.updateOrder = catchAsync(async (req, res, next) => {
 
@@ -35,7 +144,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 		
 			 order = await Order.findByIdAndUpdate(orderId, updatedOrderClient, {
 				new: true
-			});
+			}).populate('bundle user', 'userName title price images photo slug');;
 			isUser = true;
 		}else if(isOrder.seller.toString() === req.user.id) {
 
@@ -47,7 +156,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 
 			order = await Order.findByIdAndUpdate(orderId, updatedOrderSeller, {
 				new: true
-			});
+			}).populate('bundle user', 'userName title price images photo slug');
 			isUser = false
 		}
 
@@ -81,24 +190,13 @@ exports.getOneOrder = catchAsync(async (req, res, next) => {
 			      { orderId: { $in: orderId } },
 			      {$or: [{user: req.user.id}, {seller: req.user.id}]}
 			   ]
-			}).populate({path: 'bundle'});
-
-		const {deliverDate} = order;
-
-		const newDate = new Date(Date.now());
-		const endDate = new Date(deliverDate);
-		const timeRemaining = endDate.getTime() - newDate.getTime();
-
-		// let expiredTime = false;
-		// if(timeRemaining < 0){
-		// 	expiredTime = true;
-		// }
+			}).populate('bundle user', 'userName title price images photo slug');
 
 		let isUser;
 
-		if (order.user.toString() === req.user.id) {
+		if (order.user.id === req.user.id) {
 
-			isUser = true;
+					isUser = true;
 		}else {
 
 			isUser = false;
@@ -123,7 +221,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
 	// const deliverDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
 	// console.log(user);
-	const newOrder = await Order.create({
+	let newOrder = await Order.create({
 		active,
 		cancelled,
 		completed,
@@ -131,8 +229,11 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 		deliverDate,
 		bundle,
 		user,
-		seller
+		seller,
+		createdAt:Date.now()
 	});
+
+	newOrder = await newOrder.populate('user', 'userName');
 
 	res.status(201).json({
 		status: 'success',

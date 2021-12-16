@@ -1,5 +1,5 @@
 
-const filterMessages = (allMessages, user) => {
+const filterMessages = (allMessages, user, limit = 0) => {
   
 	// Removing all the sent messages
 	const sender = Array.from(new Set(allMessages.map(item => item.sender.userName).map(id =>  allMessages.find(elem => elem.sender.userName == id))));
@@ -59,6 +59,12 @@ const filterMessages = (allMessages, user) => {
 
 	usersMessages[name] = {item, countUnread:countUnread[name]};
 	});
+
+	// if(limit){
+	// 	usersMessages.slice(0, limit)
+	// }
+
+	// console.log({usersMessages});
 
 	return usersMessages;
 }

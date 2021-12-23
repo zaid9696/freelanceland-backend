@@ -7,7 +7,7 @@ const authController = require('../controllers/authController');
 const router = express.Router();
 
 
-router.route('/usersMessages/:userId').get(authController.protect ,usersMessages);
+router.route('/usersMessages').get(authController.protect ,usersMessages);
 router.route('/:userName').get(authController.protect ,getMessageByUserName);
 
 

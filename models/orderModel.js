@@ -9,6 +9,14 @@ const orderSchema = new mongoose.Schema({
 		default: Date.now()
 	},
 
+	buyerReview: {
+		type: mongoose.Schema.ObjectId,
+		ref: 'Review'
+	},
+	sellerReview: {
+			type: mongoose.Schema.ObjectId,
+			ref: 'Review'
+		},
 	active: {
 		type: Boolean,
 		default: false

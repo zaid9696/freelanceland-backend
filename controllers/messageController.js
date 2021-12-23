@@ -7,7 +7,8 @@ const filterMessages = require('../utils/filterMessages');
 
 exports.usersMessages = catchAsync(async (req, res, next) => {
 
-	const {userId} = req.params;
+	// const {userId} = req.params;
+	const userId = req.user.id;
 	let limit = req.query.limit * 1
 	limit > 0 ? limit = req.query.limit * 1 : limit = 0;
 

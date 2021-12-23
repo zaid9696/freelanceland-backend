@@ -117,12 +117,13 @@ exports.processingPaymentPayPal = catchAsync(async (req, res, next) => {
 exports.updateOrder = catchAsync(async (req, res, next) => {
 
 		const {orderId} = req.params;
-		const {accepted, notAccepted, completed, cancelled, delivered, deliveredDesc, active} = req.body;
+		const {accepted, notAccepted, completed, cancelled, delivered, deliveredDesc, active, buyerReview, sellerReview} = req.body;
 		const updatedOrderClient = {
 			accepted,
 			notAccepted,
 			completed,
 			active,
+			buyerReview,
 			timeStampBuyer: new Date(Date.now())
 
 		}
@@ -133,6 +134,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 			deliveredDesc,
 			active,
 			notAccepted,
+			sellerReview,
 			timeStampBuyer: notAccepted ? new Date(Date.now()) : undefined,
 			timeStampSeller: !notAccepted ? new Date(Date.now()) : undefined
 		}
@@ -144,19 +146,21 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 		
 			 order = await Order.findByIdAndUpdate(orderId, updatedOrderClient, {
 				new: true
-			}).populate('bundle user', 'userName title price images photo slug');;
+			}).populate('bundle user buyerReview sellerReview', 'userName title price images photo slug review rating createdAt buyer seller');;
 			isUser = true;
 		}else if(isOrder.seller.toString() === req.user.id) {
 
-			
-			if(!deliveredDesc && !cancelled && !notAccepted){
+					
 
+		  if(!deliveredDesc && !cancelled && !notAccepted && !sellerReview){
+		  	
 				return next(new AppError('You must provide a MESSAGE for the Buyer'));
 			}
+			
 
 			order = await Order.findByIdAndUpdate(orderId, updatedOrderSeller, {
 				new: true
-			}).populate('bundle user', 'userName title price images photo slug');
+			}).populate('bundle user sellerReview buyerReview', 'userName title price images photo slug review rating createdAt buyer seller');
 			isUser = false
 		}
 
@@ -190,9 +194,10 @@ exports.getOneOrder = catchAsync(async (req, res, next) => {
 			      { orderId: { $in: orderId } },
 			      {$or: [{user: req.user.id}, {seller: req.user.id}]}
 			   ]
-			}).populate('bundle user', 'userName title price images photo slug');
+			}).populate('bundle user buyerReview sellerReview', 'userName title price images photo slug review rating createdAt buyer seller');
 
 		let isUser;
+
 
 		if (order.user.id === req.user.id) {
 

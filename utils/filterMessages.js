@@ -64,7 +64,23 @@ const filterMessages = (allMessages, user, limit = 0) => {
 	// 	usersMessages.slice(0, limit)
 	// }
 
-	// console.log({usersMessages});
+
+// if there is a limit number of messages
+
+if(limit > 0){
+
+const limitedUserMessages = Object.keys(usersMessages).slice(0, limit).reduce((result, key) => {
+
+	result[key] = usersMessages[key];
+	return result;
+
+}, {});
+
+return limitedUserMessages;
+
+}
+
+	// console.log({limitedUserMessages});
 
 	return usersMessages;
 }

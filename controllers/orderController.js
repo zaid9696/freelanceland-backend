@@ -228,17 +228,18 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 	// console.log(user);
 	let newOrder = await Order.create({
 		active,
-		cancelled,
+		cancelled,			
 		completed,
 		orderId,
 		deliverDate,
 		bundle,
 		user,
+		orderId,
 		seller,
 		createdAt:Date.now()
 	});
 
-	newOrder = await newOrder.populate('user', 'userName');
+	// newOrder = await newOrder.populate('user', 'userName');
 
 	res.status(201).json({
 		status: 'success',

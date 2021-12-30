@@ -37,6 +37,15 @@ const userSchema = new mongoose.Schema({
 		minLength: 4,
 		select: false
 	},
+	userRatingAverage: {
+		type: Number,
+		min: [1, 'User Average must be above 1.0'],
+		max: [5, 'User Average must be blow 5.0']
+	},
+	userTotalReviews: {
+		type: Number,
+		default: 0
+	},
 	skills: [String],
 	aboutMe: String,
 	lastSeen: Date,

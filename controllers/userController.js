@@ -1,4 +1,6 @@
 const User = require('../models/userModel');
+const Bundle = require('../models/bundleModel');
+const Review =  require('../models/reviewModal');
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/AppError');
 const multer = require('multer');
@@ -57,14 +59,29 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 
 })
 
-exports.getUsers = catchAsync(async (req, res, next) => {
+exports.getOneUser = catchAsync(async (req, res, next) => {
 
-	const allUsers = await User.find();
+	const {userName} = req.params;
+
+	const user = await User.findOne({
+		userName: userName
+	});
+
+	const bundles = await Bundle.find({
+		user: user.id
+	})
+
+	const reviews = await Review.find({$or: [{seller: user.id}, {buyer: user.id}]}).populate('creator buyer seller', 'userName photo').populate({
+		path: 'reply',
+		populate: {path: 'creator'}
+	});
 
 
 	res.status(200).json({
 		status: 'success',
-		allUsers
+		user,
+		bundles,
+		reviews
 	})
 
 })

@@ -6,6 +6,7 @@ const cors = require('cors');
 const compression = require('compression');
 
 
+
 const AppError  = require('./utils/appError');
 const errorController = require('./controllers/errorController');
 const userRoutes = require('./routes/userRoutes');
@@ -18,7 +19,8 @@ const reviewRoutes = require('./routes/reviewRoutes');
 
 const app = express();
 
-
+app.use('/public/images', express.static(path.join('public', 'images')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(morgan('dev'));
 

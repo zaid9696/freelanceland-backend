@@ -31,7 +31,11 @@ exports.updateReview = catchAsync(async (req, res, next) => {
 
 exports.createReview = catchAsync(async (req, res, next) => {
 
-	const {review, rating, buyer, bundle, seller, createdAt} = req.body;
+    const {review, rating, buyer, bundle, seller, createdAt, creator} = req.body;
+
+    let isReviewer;
+
+    buyer == creator ? isReviewer = true : isReviewer = false;
 
 		const newReview = await Review.create({
 			review,
@@ -39,7 +43,9 @@ exports.createReview = catchAsync(async (req, res, next) => {
 			buyer,
 			bundle,
 			seller,
-			createdAt
+			creator,
+			createdAt,
+			isReviewer
 		});
 
 

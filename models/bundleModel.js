@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt  = require('bcryptjs');
-const slugify = require('slugify'); 
+const slugify = require('slugify');
+// const Review = = require('reviewModal');
 
 const bundleSchema = new mongoose.Schema({
 
@@ -27,10 +28,19 @@ const bundleSchema = new mongoose.Schema({
 		required: [true, ' Description is required']
 	}, 
 	images: [String],
-	orders: Array,
 	user: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'User'
+	},
+	ratingsAverage: {
+		type: Number,
+		min: [1, 'A bundle must be above 1.0'],
+		max: [5, 'A bundle must be below 5.0'],
+		set: value => Math.round(value * 10) / 10
+	},
+	ratingsQuantity: {
+		type:Number,
+		default:0
 	}
 
 },
@@ -41,6 +51,11 @@ const bundleSchema = new mongoose.Schema({
 }
 
 );
+
+
+
+
+
 
 bundleSchema.pre('save', function(next) {
 

@@ -15,6 +15,8 @@ const orderRoutes = require('./routes/orderRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const offersRoutes = require('./routes/offersRoutes');
 
 
 const app = express();
@@ -58,6 +60,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/offers', offersRoutes);
 
 
 app.all('*', (req, res, next) => {

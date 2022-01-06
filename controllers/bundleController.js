@@ -1,27 +1,37 @@
 const Bundle =  require('../models/bundleModel');
+const Review =  require('../models/reviewModal');
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/AppError');
 
+exports.getBundlesByLatest = catchAsync(async (req, res, next) => {
+
+	const latestBundles =  await Bundle.find().limit(4).sort({
+		createdAt: -1
+	}).populate('user', 'userName photo');
+
+	res.status(200).json({
+		status: 'success',
+		latestBundles
+	})
+
+})
+
+exports.getBundlesByTopRate = catchAsync(async (req, res, next) => {
 
 
-// exports.bundleOrderSave = catchAsync(async (req, res, next) => {
+	const topRatedBundles = await Bundle.find().limit(4).sort({
+		ratingsAverage: -1,
+		ratingsQuantity: -1
+	}).populate('user', 'userName photo');
 
-// 	const {bundleId} = req.params;
-	
-// 	const {orders} = req.body;
-// 	console.log(orders);
-// 	const bundle = await Bundle.findById(bundleId);
-// 	console.log(bundle.orders);
+	res.status(200).json({
+		status: 'success',
+		topRatedBundles
+	})
 
-// 	 const newBundle  = await bundle.save()
+})
 
-// 	res.status(200).json({
 
-// 		status: 'success',
-// 		bundle
-// 	})
-
-// })
 
 exports.getOneBundle = catchAsync(async (req, res, next) => {
 
@@ -29,18 +39,24 @@ exports.getOneBundle = catchAsync(async (req, res, next) => {
 	
 	
 	const bundle = await Bundle.findById(bundleId).populate({path: 'user'});
+	let reviews = await Review.find({
+		bundle: bundle.id,
+		isReviewer: true
+	}).populate({path: 'buyer reply seller'});
 
 	res.status(200).json({
 
 		status: 'success',
-		bundle
+		bundle,
+		reviews
 	})
 
 })
 
 exports.getBundles = catchAsync(async (req, res, next) => {
 
-	const bundles = await Bundle.find();
+	const {userId, bundleId} = req.params;
+	const bundles = await Bundle.find({user: userId, _id: {$ne: bundleId}}).populate({path: 'user'});
 
 	res.status(200).json({
 		status:'success',

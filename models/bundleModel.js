@@ -32,6 +32,11 @@ const bundleSchema = new mongoose.Schema({
 		type: mongoose.Schema.ObjectId,
 		ref: 'User'
 	},
+	category: {
+		type: mongoose.Schema.ObjectId,
+		ref: 'Category',
+		required: [true, 'Bundle must have a category']
+	},
 	ratingsAverage: {
 		type: Number,
 		min: [1, 'A bundle must be above 1.0'],
@@ -41,7 +46,8 @@ const bundleSchema = new mongoose.Schema({
 	ratingsQuantity: {
 		type:Number,
 		default:0
-	}
+	},
+	createdAt: Date
 
 },
 
@@ -51,9 +57,6 @@ const bundleSchema = new mongoose.Schema({
 }
 
 );
-
-
-
 
 
 

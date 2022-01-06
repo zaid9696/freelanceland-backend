@@ -59,7 +59,8 @@ const orderSchema = new mongoose.Schema({
 	seller: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'User'
-	}
+	},
+
 },
 
 {
@@ -99,13 +100,45 @@ orderSchema.statics.calcOrders = async function(sellerId){
 
 		]);
 
+	const recentDelivery = await this.aggregate([
 
-	const totalOrders = statsTotalNotComplatedOrders[0].totalOrdersNoComplated
-	const completed = statsTotalComplatedOrders[0].totalOrdersComplated;
+			{
+				$match: {seller: sellerId, delivered: true}	
+			},
+
+			{
+				$group: {
+					_id: '$timeStampSeller',
+					lastDelivery: {$first: '$timeStampSeller'}
+				},
+			},
+			{
+				$sort: {lastDelivery: -1}
+			},
+			{
+				$limit:1
+			}
+
+	]);
+
+	
+	console.log({totest:statsTotalComplatedOrders});
+	const totalOrders = statsTotalNotComplatedOrders[0].totalOrdersNoComplated ? statsTotalNotComplatedOrders[0].totalOrdersNoComplated : 0
+	const completed = statsTotalComplatedOrders.length !== 0 ? statsTotalComplatedOrders[0].totalOrdersComplated : 0;
 	const totalPercentage = (100 * completed) / totalOrders;
-	console.log({totalPercentage});
 
-	console.log({statsTotalComplatedOrders,statsTotalNotComplatedOrders});
+	if(statsTotalNotComplatedOrders.length > 0){
+		await User.findByIdAndUpdate(sellerId, {completedOrders: totalPercentage} );
+	}
+
+	if(recentDelivery.length > 0){
+
+		await User.findByIdAndUpdate(sellerId, {
+			recentDelivery: recentDelivery[0].lastDelivery
+		})
+	}
+
+	// console.log({statsTotalComplatedOrders,statsTotalNotComplatedOrders});
 
 }
 

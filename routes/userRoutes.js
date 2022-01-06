@@ -10,6 +10,7 @@ router.route('/logout').post(authController.logout);
 router.route('/signup').post(authController.signUp);
 router.route('/login').post(authController.login);
 router.route('/:userName').get(userController.getOneUser);
+router.route('/addFavourite/:userId').patch(authController.protect,userController.addFavourite).delete(authController.protect,userController.removeFavourites)
 router.route('/updateMe').patch(authController.protect,userController.uploadUserPhoto, userController.resizeUserPhoto, userController.updateUser);
 
 

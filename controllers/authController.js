@@ -59,7 +59,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
 		countryCode,
 		localTimeZone,
 		lastSeen,
-		password
+		password,
+		createdAt: Date.now()
 	});
 
 	createToken(newUser, 201, req, res);

@@ -42,15 +42,31 @@ const userSchema = new mongoose.Schema({
 		min: [1, 'User Average must be above 1.0'],
 		max: [5, 'User Average must be blow 5.0']
 	},
+	createdAt:{
+		type: Date,
+		default: Date.now()
+	},
 	userTotalReviews: {
 		type: Number,
 		default: 0
 	},
+	totalEarned: {
+		type: Number,
+		default: 0
+	},
 	skills: [String],
+	languages:[String],
+	favourites: [String],
 	aboutMe: String,
 	lastSeen: Date,
 	countryCode: String,
-	localTimeZone: String
+	localTimeZone: String,
+	completedOrders: {
+		type: Number,
+		default:0
+	},
+	recentDelivery: Date
+	
 },
 {
 	toJSON: {virtuals: true},

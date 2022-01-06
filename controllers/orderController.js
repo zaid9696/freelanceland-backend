@@ -2,6 +2,7 @@ const {promisify} = require('util');
 const jwt = require('jsonwebtoken');
 const paypal = require("@paypal/checkout-server-sdk")
 const Bundle =  require('../models/bundleModel');
+const User = require('../models/userModel');
 
 const Environment = paypal.core.SandboxEnvironment;
 const paypalClient = new paypal.core.PayPalHttpClient(
@@ -139,16 +140,25 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 			timeStampSeller: !notAccepted ? new Date(Date.now()) : undefined
 		}
 
-		const isOrder = await Order.findById(orderId);
+		const isOrder = await Order.findById(orderId).populate('user seller', 'totalEarned');
+		console.log({isOrder});
 		let order ;
 		let isUser;
-		if(isOrder.user.toString() === req.user.id){
-		
-			 order = await Order.findByIdAndUpdate(orderId, updatedOrderClient, {
+		if(isOrder.user.id.toString() === req.user.id){
+			
+			order = await Order.findByIdAndUpdate(orderId, updatedOrderClient, {
 				new: true
-			}).populate('bundle user buyerReview sellerReview', 'userName title price images photo slug review rating createdAt buyer seller');;
+			}).populate('bundle user buyerReview sellerReview', 'userName title price images photo slug review rating createdAt buyer seller');
+			// Adding  the bundle's price to the seller's balance;
+			if(accepted){
+
+			 await User.findByIdAndUpdate(isOrder.seller.id, {
+					totalEarned: isOrder.seller.totalEarned + order.bundle.price
+				});
+				
+			}
 			isUser = true;
-		}else if(isOrder.seller.toString() === req.user.id) {
+		}else if(isOrder.seller.id.toString() === req.user.id) {
 
 					
 

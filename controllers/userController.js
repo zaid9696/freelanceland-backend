@@ -38,6 +38,37 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 
 })
 
+exports.removeFavourites = catchAsync(async (req, res, next) => {
+
+	const {userId} = req.params;
+	const {bundleId} = req.body;
+	const removedFavourites  = await User.findByIdAndUpdate(userId, {
+		$pull: {favourites: bundleId}
+	});
+	console.log({userId, bundleId});
+
+	res.status(200).json({
+		status: 'success',
+		removedFavourites
+	})
+
+})
+
+exports.addFavourite = catchAsync(async (req, res, next) => {
+
+	const {userId} = req.params;
+	const {bundleId} = req.body;
+	const updatedFavourites  = await User.findByIdAndUpdate(userId, {
+		$addToSet: {favourites: bundleId}
+	});
+	console.log({userId, bundleId});
+
+	res.status(200).json({
+		status: 'success',
+		updatedFavourites
+	})
+})
+
 exports.updateUser = catchAsync(async (req, res, next) => {
 
 	const {email} = req.body
@@ -69,7 +100,7 @@ exports.getOneUser = catchAsync(async (req, res, next) => {
 
 	const bundles = await Bundle.find({
 		user: user.id
-	})
+	}).populate('user', 'photo userName');
 
 	const reviews = await Review.find({$or: [{seller: user.id}, {buyer: user.id}]}).populate('creator buyer seller', 'userName photo').populate({
 		path: 'reply',

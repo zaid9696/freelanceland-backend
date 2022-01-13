@@ -45,7 +45,7 @@ const createToken = (user, statusCode, req, res) => {
 
 exports.signUp = catchAsync(async (req, res, next) => {
 
-	const {userName, email, password, firstName, lastName, skills, aboutMe, role, countryCode, localTimeZone, lastSeen} = req.body;
+	const {userName, email, password, firstName, lastName, skills, aboutMe, role, countryCode, localTimeZone, lastSeen, photo, isFacebook} = req.body;
 
 	// console.log(firstName)
 	const newUser = await User.create({
@@ -60,6 +60,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
 		localTimeZone,
 		lastSeen,
 		password,
+		photo,
+		isFacebook,
 		createdAt: Date.now()
 	});
 

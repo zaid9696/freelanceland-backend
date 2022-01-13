@@ -58,7 +58,9 @@ const bundleSchema = new mongoose.Schema({
 
 );
 
-
+bundleSchema.index({
+	title: 'text'
+})
 
 bundleSchema.pre('save', function(next) {
 
@@ -66,6 +68,7 @@ bundleSchema.pre('save', function(next) {
 
 	next()
 })
+
 
 
 const Bundle = mongoose.model('Bundle', bundleSchema);

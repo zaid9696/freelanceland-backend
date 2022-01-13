@@ -65,6 +65,10 @@ const userSchema = new mongoose.Schema({
 		type: Number,
 		default:0
 	},
+	isFacebook: {
+		type: Boolean,
+		default: false
+	},
 	recentDelivery: Date
 	
 },

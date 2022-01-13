@@ -2,6 +2,73 @@ const Bundle =  require('../models/bundleModel');
 const Review =  require('../models/reviewModal');
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/AppError');
+const multer = require('multer');
+const sharp = require('sharp');
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+
+	if(file.mimetype.startsWith('image')){
+		cb(null, true)
+	}else {
+		cb(new AppError('Please Upload Only Image', 400))
+	}
+
+}
+
+const upload = multer({
+
+	storage: multerStorage,
+	fileFilter: multerFilter
+});
+
+exports.uploadBundleImages = upload.fields([
+
+	{name: 'images', maxCount: 2}
+
+]);
+
+exports.resizeBundleImages = catchAsync (async (req, res, next) => {
+
+	if(!req.files.images) return next(new AppError('You can not create a bundle without images so, Please upload images',401));
+
+	
+	req.body.image = []
+
+	await Promise.all(req.files.images.map(async (file, i) => {
+
+		const imageName = `bundle-${req.user.id}-${Date.now()}-${i + 1}.jpeg`;
+		await sharp(file.buffer).resize(2000,1333).toFormat('jpeg').jpeg({
+			quality: 90
+		}).toFile(`public/images/bundles/${imageName}`);
+		req.body.image.push(imageName);
+
+	}));
+
+	next();
+})
+
+
+exports.searchBundles = catchAsync(async (req, res, next) => {
+
+		const {query} = req.params;
+	
+		const searchedBundles = await Bundle.find({
+			    '$text': {
+			        '$search': query
+			    },
+			})
+		
+
+
+	res.status(200).json({
+		status: 'success',
+		searchedBundles
+	})
+
+
+})
 
 exports.getBundlesByLatest = catchAsync(async (req, res, next) => {
 
@@ -67,7 +134,7 @@ exports.getBundles = catchAsync(async (req, res, next) => {
 
 exports.addBundle = catchAsync(async (req, res, next) => {
 
-	const {title, price, revisions, deliverDays, description, images, orders, user} = req.body;
+	const {title, price, revisions, deliverDays, description, images, user, category} = req.body;
 
 	// console.log({
 	// 	title,
@@ -80,17 +147,29 @@ exports.addBundle = catchAsync(async (req, res, next) => {
 	// 	user
 	// })
 
-	const newBundle = await Bundle.create({
+	// const newBundle = await Bundle.create({
+	// 	title,
+	// 	price,
+	// 	revisions,
+	// 	deliverDays,
+	// 	description,
+	// 	images,
+	// 	user
+	//  createdAt: Date.now(),
+	//  category
+	// });
+
+	const newBundle = {
 		title,
 		price,
 		revisions,
 		deliverDays,
 		description,
 		images,
-		orders,
 		user
-	});
+	}
 
+	console.log({images: req.body.image});
 	res.status(201).json({
 		status: 'success',
 		bundle:newBundle

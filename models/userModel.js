@@ -55,21 +55,18 @@ const userSchema = new mongoose.Schema({
 		default: 0
 	},
 	skills: [String],
-	languages:[String],
 	favourites: [String],
 	aboutMe: String,
 	lastSeen: Date,
 	countryCode: String,
-	localTimeZone: String,
+	additionalLang: String,
+	preferredLang: String,
 	completedOrders: {
 		type: Number,
 		default:0
 	},
-	isFacebook: {
-		type: Boolean,
-		default: false
-	},
-	recentDelivery: Date
+	recentDelivery: Date,
+	phone: Number
 	
 },
 {
@@ -77,6 +74,7 @@ const userSchema = new mongoose.Schema({
 	toObject: {virtuals: true},
 }
 );
+
 
 
 

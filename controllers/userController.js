@@ -71,10 +71,23 @@ exports.addFavourite = catchAsync(async (req, res, next) => {
 
 exports.updateUser = catchAsync(async (req, res, next) => {
 
-	const {email} = req.body
+	const {aboutMe, skills, firstName, lastName, localTimeZone, countryCode, additionalLang, preferredLang, phone} = req.body
 
+	let arrSkills = []
+	const testSkill = skills.split(',').map(item => {
+
+		arrSkills.push(item);
+	})
 	const updatedUserObj = {
-		email
+		aboutMe,
+		skills: arrSkills,
+		firstName,
+		lastName,
+		localTimeZone,
+		countryCode,
+		additionalLang,
+		preferredLang,
+		phone
 	}
 
 	if(req.file) updatedUserObj.photo = req.file.filename;
@@ -83,9 +96,12 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 		new: true
 	});
 
+
+	console.log({arrSkills});
+
 	res.status(200).json({
 		status: 'success',
-		updatedUser
+		updatedUser: updatedUserObj
 	})
 
 })
@@ -100,7 +116,7 @@ exports.getOneUser = catchAsync(async (req, res, next) => {
 
 	const bundles = await Bundle.find({
 		user: user.id
-	}).populate('user', 'photo userName');
+	}).populate('user category', 'photo userName category categorySlug id');
 
 	const reviews = await Review.find({$or: [{seller: user.id}, {buyer: user.id}]}).populate('creator buyer seller', 'userName photo').populate({
 		path: 'reply',

@@ -4,7 +4,7 @@ const AppError = require('../utils/AppError');
 
 exports.getAllOffers = catchAsync(async (req, res, next) => {
 
-	const allOffers = await Offers.find().populate('buyer category', 'photo userName category categorySlug');
+	const allOffers = await Offers.find().populate('buyer category', 'photo userName category categorySlug').sort({createdAt: -1});
 
 	res.status(200).json({
 		status: 'success',
@@ -25,6 +25,7 @@ exports.createOffer = catchAsync(async (req, res, next) => {
 		firstBudget,
 		secondBudget,
 		expiry: expiryDate,
+		category,
 		createdAt: Date.now()
 	})
 

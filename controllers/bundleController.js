@@ -105,7 +105,7 @@ exports.getOneBundle = catchAsync(async (req, res, next) => {
 	const {bundleId} = req.params;
 	
 	
-	const bundle = await Bundle.findById(bundleId).populate({path: 'user'});
+	const bundle = await Bundle.findById(bundleId).populate({path: 'user category'});
 	let reviews = await Review.find({
 		bundle: bundle.id,
 		isReviewer: true
@@ -123,7 +123,7 @@ exports.getOneBundle = catchAsync(async (req, res, next) => {
 exports.getBundles = catchAsync(async (req, res, next) => {
 
 	const {userId, bundleId} = req.params;
-	const bundles = await Bundle.find({user: userId, _id: {$ne: bundleId}}).populate({path: 'user'});
+	const bundles = await Bundle.find({user: userId, _id: {$ne: bundleId}}).populate({path: 'user category'});
 
 	res.status(200).json({
 		status:'success',
@@ -147,27 +147,29 @@ exports.addBundle = catchAsync(async (req, res, next) => {
 	// 	user
 	// })
 
-	// const newBundle = await Bundle.create({
-	// 	title,
-	// 	price,
-	// 	revisions,
-	// 	deliverDays,
-	// 	description,
-	// 	images,
-	// 	user
-	//  createdAt: Date.now(),
-	//  category
-	// });
-
-	const newBundle = {
+	const newBundle = await Bundle.create({
 		title,
 		price,
 		revisions,
 		deliverDays,
 		description,
-		images,
-		user
-	}
+		images: req.body.image,
+		user,
+		category,
+		createdAt: Date.now()
+	});
+
+	// const newBundle = {
+	// 	title,
+	// 	price,
+	// 	revisions,
+	// 	deliverDays,
+	// 	description,
+	// 	images: req.body.image,
+	// 	user,
+	// 	category,
+	// 	createdAt: Date.now()
+	// }
 
 	console.log({images: req.body.image});
 	res.status(201).json({

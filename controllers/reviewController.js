@@ -2,6 +2,20 @@ const Review = require('../models/reviewModal');
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/AppError');
 
+exports.myReviews = catchAsync(async (req, res, next) => {
+
+
+	const reviews = await Review.find({
+		creator: req.user.id
+	}).populate('creator', 'photo userName');
+
+	res.status(200).json({
+		status: 'success',
+		reviews
+	})
+
+})
+
 exports.getReviews = catchAsync(async (req, res, next) => {
 
 	const allReviews = await Review.find().populate('reply');

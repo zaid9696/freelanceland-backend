@@ -12,11 +12,12 @@ exports.usersMessages = catchAsync(async (req, res, next) => {
 	let limit = req.query.limit * 1
 	limit > 0 ? limit = req.query.limit * 1 : limit = 0;
 
+
 	const allMessages = await Message.find({
 			
 			$or: [{sender: userId}, {receiver: userId}]
 			
-		}).sort({timeStamp: -1}).populate('sender receiver', 'userName');;
+		}).sort({timeStamp: -1}).populate('sender receiver', 'userName photo');
 
 	// console.log({allMessages});
    	const usersMessages = filterMessages(allMessages, req.user, limit);
@@ -31,7 +32,7 @@ exports.usersMessages = catchAsync(async (req, res, next) => {
 exports.getMessageByUserName = catchAsync(async (req, res, next) => {
 
 		const {userName} = req.params;
-		const user = await User.findOne({userName});
+		const user = await User.findOne({userName})
 		
 		if(userName == req.user.userName){
 
@@ -43,13 +44,13 @@ exports.getMessageByUserName = catchAsync(async (req, res, next) => {
 				{$or: [{sender: user.id}, {receiver: user.id}]},
 				{$or: [{sender: req.user.id}, {receiver: req.user.id}]}
 			]
-		}).populate('sender receiver', 'userName');
+		}).populate('sender receiver', 'userName photo');
 
 		const allMessages = await Message.find({
 			
 			$or: [{sender: req.user.id}, {receiver: req.user.id}]
 			
-		}).sort({timeStamp: -1}).populate('sender receiver', 'userName');;
+		}).sort({timeStamp: -1}).populate('sender receiver', 'userName photo');;
 
 
    		const usersMessages = filterMessages(allMessages, req.user);

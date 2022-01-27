@@ -59,7 +59,7 @@ const bundleSchema = new mongoose.Schema({
 );
 
 bundleSchema.index({
-	title: 'text'
+	"$**": 'text'
 })
 
 bundleSchema.pre('save', function(next) {

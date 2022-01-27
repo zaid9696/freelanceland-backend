@@ -2,6 +2,30 @@ const Offers =  require('../models/offersModal');
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/AppError');
 
+exports.getAllOtherOffers  = catchAsync(async (req, res, next) => {
+
+	const allOffers =  await Offers.find({buyer: {$ne: req.user.id}}).populate('buyer category', 'photo userName category categorySlug').sort({createdAt: -1})
+
+
+	res.status(200).json({
+		status: 'success',
+		allOffers
+	})
+
+
+
+})
+
+exports.getAllMyOffers =  catchAsync(async (req, res, next) => {
+
+	const allRequests = await Offers.find({buyer: req.user.id}).populate('buyer category', 'photo userName category categorySlug').sort({createdAt: -1});
+
+	res.status(200).json({
+		status: 'success',
+		allRequests
+	})
+})
+
 exports.getAllOffers = catchAsync(async (req, res, next) => {
 
 	const allOffers = await Offers.find().populate('buyer category', 'photo userName category categorySlug').sort({createdAt: -1});

@@ -4,6 +4,7 @@ const bundleController = require('../controllers/bundleController');
 
 const router = express.Router();
 
+router.route('/dashboard').get(authController.protect,bundleController.getBundlesDashboard);
 router.route('/search/:query').get(bundleController.searchBundles);
 router.route('/latestBundles').get(bundleController.getBundlesByLatest);
 router.route('/topRated').get(bundleController.getBundlesByTopRate);

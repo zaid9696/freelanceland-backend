@@ -5,6 +5,8 @@ const authController = require('../controllers/authController')
 const router = express.Router();
 
 
+router.route('/dashboard/favBundles').get(authController.protect, userController.getDashboardFavourites);
+router.route('/dashboard').get(authController.protect, userController.getDashboardUser);
 router.route('/isloggedin').get(authController.isLoggedIn);
 router.route('/logout').post(authController.logout);
 router.route('/signup').post(authController.signUp);

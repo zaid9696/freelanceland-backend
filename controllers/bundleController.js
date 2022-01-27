@@ -50,16 +50,30 @@ exports.resizeBundleImages = catchAsync (async (req, res, next) => {
 })
 
 
+exports.getBundlesDashboard = catchAsync(async (req, res, next) => {
+
+
+	const bundles = await Bundle.find({user: req.user.id,}).populate({path: 'user category'});
+
+	res.status(200).json({
+		status:'success',
+		bundles:bundles
+	})
+
+});
+
+
 exports.searchBundles = catchAsync(async (req, res, next) => {
 
 		const {query} = req.params;
-	
+		
 		const searchedBundles = await Bundle.find({
 			    '$text': {
 			        '$search': query
 			    },
 			})
 		
+		console.log({searchedBundles});
 
 
 	res.status(200).json({

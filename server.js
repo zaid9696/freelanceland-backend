@@ -60,7 +60,7 @@ io.sockets.on('connection', (socket) =>{
 	 		const newMessages = await Message.find({
 	 			_id: {$in: messIds},
 	 			read: true
-	 		}).populate('sender receiver', 'userName');;
+	 		}).populate('sender receiver', 'userName photo');;
 
 
 
@@ -79,7 +79,7 @@ io.sockets.on('connection', (socket) =>{
 
 	 	let newMessage;
 	 	const createdMessage =  await Message.create({message, sender, receiver, timeStamp: new Date(Date.now())});
-	 	newMessage = await createdMessage.populate('sender receiver', 'userName');
+	 	newMessage = await createdMessage.populate('sender receiver', 'userName photo');
 	 	const userInfo = {
 	 		userName,
 	 		id: sender

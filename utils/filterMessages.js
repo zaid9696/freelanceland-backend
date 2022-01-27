@@ -1,4 +1,5 @@
 
+
 const filterMessages = (allMessages, user, limit = 0) => {
   
 	// Removing all the sent messages

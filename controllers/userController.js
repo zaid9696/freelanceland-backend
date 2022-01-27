@@ -1,7 +1,8 @@
 const User = require('../models/userModel');
 const Bundle = require('../models/bundleModel');
 const Review =  require('../models/reviewModal');
-const catchAsync = require('../utils/catchAsync')
+const Order  =  require('../models/orderModel');
+const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 const multer = require('multer');
 const sharp = require('sharp');
@@ -36,6 +37,77 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 
 	next()
 
+})
+
+exports.getDashboardFavourites = catchAsync(async (req, res, next) => {
+
+	const allFav =  await User.findById(req.user.id).populate({path: 'favourites'})
+
+
+
+	// await Promise.all()
+
+	let favBundles = []
+
+	await Promise.all(allFav.favourites.map(async (item) => {
+
+		const result = await Bundle.findById(item).populate({path: 'user category'});;
+
+		favBundles.push(result);
+
+	}));
+
+
+
+
+	console.log({favBundles});
+
+
+	res.status(200).json({
+		status: 'success',
+		favBundles
+	})
+})
+
+exports.getDashboardUser = catchAsync(async (req, res, next) => {
+
+	const user = await User.findById(req.user.id);
+
+	const orders = await Order.find({
+		seller: req.user.id
+	});
+
+	console.log({orders});
+	let activeNum = 0;
+	let cancelNum = 0;
+	let completedNum = 0;
+
+	orders.map(item => {
+
+		if(item.active){
+
+			activeNum += 1;
+		}
+
+		if(item.accepted && item.delivered){
+			completedNum += 1;
+		}
+		if(item.cancelled){
+			cancelNum += 1;
+		}
+
+
+	});
+
+	// console.log({activeNum, completedNum});
+
+	res.status(200).json({
+		status: 'success',
+		user,
+		cancelNum,
+		completedNum,
+		activeNum
+	})
 })
 
 exports.removeFavourites = catchAsync(async (req, res, next) => {

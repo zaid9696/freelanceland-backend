@@ -95,7 +95,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
-
+	console.log({Cookie:req.cookies.jwt});
 	if(req.cookies.jwt){
 	
 		try {
@@ -157,7 +157,7 @@ exports.logout = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
 
 		let token;
-		// console.log(req.cookies.jwt)
+		
 		if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
 
 			token = req.headers.authorization.split(' ')[1];
@@ -174,7 +174,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 		const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-		 const user = await User.findById(decoded.id);	
+		 const user = await User.findById(decoded.id);
 
 		 if(!user){
 		 	return next(new AppError('This user no longer exist', 400));

@@ -88,7 +88,7 @@ exports.getBundlesByLatest = catchAsync(async (req, res, next) => {
 
 	const latestBundles =  await Bundle.find().limit(4).sort({
 		createdAt: -1
-	}).populate('user', 'userName photo');
+	}).populate('user category', 'userName photo category categorySlug');
 
 	res.status(200).json({
 		status: 'success',
@@ -103,7 +103,7 @@ exports.getBundlesByTopRate = catchAsync(async (req, res, next) => {
 	const topRatedBundles = await Bundle.find().limit(4).sort({
 		ratingsAverage: -1,
 		ratingsQuantity: -1
-	}).populate('user', 'userName photo');
+	}).populate('user category', 'userName photo category categorySlug');
 
 	res.status(200).json({
 		status: 'success',

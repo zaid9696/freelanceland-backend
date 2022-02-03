@@ -11,7 +11,7 @@ exports.getAllbundlesByCategory = catchAsync(async (req, res, next) => {
 		const {category} = req.params;
 		const {page, price, review} = req.query;
 		const pageNum = page * 1;
-		const limitNum =  2;
+		const limitNum =  3;
 		const categoryId = await Category.findOne({categorySlug: category});
 		let totalBundlesNum = await Bundle.find({
 			category: categoryId.id

@@ -132,10 +132,15 @@ io.sockets.on('connection', (socket) =>{
   console.log('a user is connected')
 })
 
+const server = app.listen(port, (req, res) => {
 
-httpServer.listen(port, (req, res) => {
+		console.log(`App Running On Port ${port}`);
+});
 
-	console.log(`App running on port ${port}`);
-})
+
+// httpServer.listen(port, (req, res) => {
+
+// 	console.log(`App running on port ${port}`);
+// })
 
 

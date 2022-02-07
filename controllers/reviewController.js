@@ -1,6 +1,6 @@
 const Review = require('../models/reviewModal');
 const catchAsync = require('../utils/catchAsync')
-const AppError = require('../utils/AppError');
+const AppError = require('../utils/appError');
 
 exports.myReviews = catchAsync(async (req, res, next) => {
 

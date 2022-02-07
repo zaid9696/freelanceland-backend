@@ -3,7 +3,7 @@ const {promisify} = require('util');
 
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync')
-const AppError = require('../utils/AppError');
+const AppError = require('../utils/appError');
 
 
 const signInToken = (id) => {

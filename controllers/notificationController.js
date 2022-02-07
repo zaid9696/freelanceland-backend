@@ -1,6 +1,6 @@
 const Notification = require('../models/notificationModal');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/AppError');
+const AppError = require('../utils/appError');
 
 exports.updateNotification = catchAsync(async (req, res, next) => {
 

@@ -14,7 +14,7 @@ const paypalClient = new paypal.core.PayPalHttpClient(
 
 const Order  = require('../models/orderModel');
 const catchAsync = require('../utils/catchAsync')
-const AppError = require('../utils/AppError');
+const AppError = require('../utils/appError');
 
 
 

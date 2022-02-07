@@ -1,7 +1,7 @@
 const Category = require('../models/categoryModal');
 const Bundle =   require('../models/bundleModel');
 const catchAsync =  require('../utils/catchAsync.js');
-const AppError = require('../utils/AppError');
+const AppError = require('../utils/appError');
 
 
 

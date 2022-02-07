@@ -18,7 +18,7 @@ const db = process.env.DATABASE;
 
 mongoose.connect(db).then(con => console.log('MongoDB Connection Successfully'))
 
-const port = process.env.HOST_PORT || 5000;
+const port = process.env.PORT || 5000;
 
 
 const users = {};

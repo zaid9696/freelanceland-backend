@@ -10,7 +10,7 @@ const duplicateErrorHandler = (err) => {
 
 	const val = Object.values(err.keyValue);
 	const field = Object.keys(err.keyValue);
-	console.log(field);
+	// console.log(field);
 	const message = `Duplicate ${field} field: ${val}. Please use another Value`;
 
 	return new AppError(message, 400);
@@ -64,7 +64,7 @@ module.exports = (err, req, res, next) => {
 	err.statusCode = err.statusCode || 500;
 	err.status = err.status || 'err';
 
-		console.log(process.env.NODE_ENV);
+		// console.log(process.env.NODE_ENV);
 	if(process.env.NODE_ENV === 'development'){
 		sendErrorDev(req, res, err);
 	}

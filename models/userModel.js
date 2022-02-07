@@ -65,6 +65,7 @@ const userSchema = new mongoose.Schema({
 		type: Number,
 		default:0
 	},
+	localTimeZone: String,
 	recentDelivery: Date,
 	phone: Number
 	

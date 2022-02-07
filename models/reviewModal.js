@@ -80,7 +80,8 @@ reviewSchema.statics.calcBundlesReviews = async function(bundleId, sellerId){
 	}
 
 
-	console.log({stats});
+	
+
 
 }
 
@@ -121,7 +122,7 @@ reviewSchema.statics.calcUserReviews = async function(userId, creatorId) {
 			userTotalReviews: stats[0].totalReviews
 		});
 
-		console.log({stats});
+		
 	}
 
 

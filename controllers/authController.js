@@ -20,7 +20,7 @@ const createToken = (user, statusCode, req, res) => {
 	const dateNow = new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000);
 	
 
-	console.log('Date', dateNow);
+	
 
 	const cookieOptions = {
 		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
@@ -95,7 +95,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
-	console.log({Cookie:req.cookies.jwt});
+	// console.log({Cookie:req.cookies.jwt});
 	if(req.cookies.jwt){
 	
 		try {

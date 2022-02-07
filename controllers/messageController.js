@@ -19,7 +19,7 @@ exports.usersMessages = catchAsync(async (req, res, next) => {
 			
 		}).sort({timeStamp: -1}).populate('sender receiver', 'userName photo');
 
-	// console.log({allMessages});
+	
    	const usersMessages = filterMessages(allMessages, req.user, limit);
 
    		res.status(200).json({

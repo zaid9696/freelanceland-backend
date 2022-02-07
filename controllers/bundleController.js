@@ -73,7 +73,6 @@ exports.searchBundles = catchAsync(async (req, res, next) => {
 			    },
 			})
 		
-		console.log({searchedBundles});
 
 
 	res.status(200).json({
@@ -185,7 +184,7 @@ exports.addBundle = catchAsync(async (req, res, next) => {
 	// 	createdAt: Date.now()
 	// }
 
-	console.log({images: req.body.image});
+	
 	res.status(201).json({
 		status: 'success',
 		bundle:newBundle

@@ -29,14 +29,14 @@ exports.getAllbundlesByCategory = catchAsync(async (req, res, next) => {
 			review == 'low-high' ? filterBundle = {ratingsAverage: 1} : filterBundle = {ratingsAverage: -1}
 		}
 
-		console.log({filterBundle,review});
+		
 		const skip = (pageNum - 1) * limitNum;
 		let bundles = await Bundle.find({
 			category: categoryId.id
-		}).skip(skip).limit(limitNum).sort(filterBundle).populate('user', 'userName photo')
+		}).skip(skip).limit(limitNum).sort(filterBundle).populate('user category', 'userName photo category categorySlug')
 
 
-		console.log({count, page, skip, price});
+		
 
 		res.status(200).json({
 			status:  'success',

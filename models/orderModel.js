@@ -122,7 +122,7 @@ orderSchema.statics.calcOrders = async function(sellerId){
 	]);
 
 	
-	console.log({totest:statsTotalComplatedOrders});
+	
 	const totalOrders = statsTotalNotComplatedOrders[0].totalOrdersNoComplated ? statsTotalNotComplatedOrders[0].totalOrdersNoComplated : 0
 	const completed = statsTotalComplatedOrders.length !== 0 ? statsTotalComplatedOrders[0].totalOrdersComplated : 0;
 	const totalPercentage = (100 * completed) / totalOrders;
@@ -138,13 +138,13 @@ orderSchema.statics.calcOrders = async function(sellerId){
 		})
 	}
 
-	// console.log({statsTotalComplatedOrders,statsTotalNotComplatedOrders});
+	
 
 }
 
 orderSchema.pre(/^findOneAnd/, async function(next){
 
-	// console.log(this);
+	
 	this.r = await this.findOne().clone();
 	next()
 });

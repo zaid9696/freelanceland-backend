@@ -60,7 +60,7 @@ exports.getDashboardFavourites = catchAsync(async (req, res, next) => {
 
 
 
-	console.log({favBundles});
+	
 
 
 	res.status(200).json({
@@ -77,7 +77,7 @@ exports.getDashboardUser = catchAsync(async (req, res, next) => {
 		seller: req.user.id
 	});
 
-	console.log({orders});
+	
 	let activeNum = 0;
 	let cancelNum = 0;
 	let completedNum = 0;
@@ -99,7 +99,7 @@ exports.getDashboardUser = catchAsync(async (req, res, next) => {
 
 	});
 
-	// console.log({activeNum, completedNum});
+	
 
 	res.status(200).json({
 		status: 'success',
@@ -117,7 +117,7 @@ exports.removeFavourites = catchAsync(async (req, res, next) => {
 	const removedFavourites  = await User.findByIdAndUpdate(userId, {
 		$pull: {favourites: bundleId}
 	});
-	console.log({userId, bundleId});
+	
 
 	res.status(200).json({
 		status: 'success',
@@ -133,7 +133,7 @@ exports.addFavourite = catchAsync(async (req, res, next) => {
 	const updatedFavourites  = await User.findByIdAndUpdate(userId, {
 		$addToSet: {favourites: bundleId}
 	});
-	console.log({userId, bundleId});
+	
 
 	res.status(200).json({
 		status: 'success',
@@ -169,7 +169,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 	});
 
 
-	console.log({arrSkills});
+	
 
 	res.status(200).json({
 		status: 'success',

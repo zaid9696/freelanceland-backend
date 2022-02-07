@@ -35,8 +35,6 @@ io.sockets.on('connection', (socket) =>{
 
 	socket.on('orders', async (updatedOrder) => {
 
-		console.log({updatedOrder});
-
 		io.sockets.emit('orders', updatedOrder);
 
 	});
@@ -65,7 +63,7 @@ io.sockets.on('connection', (socket) =>{
 
 
 	 		// const newMessage = await Message.find();
-	 		console.log('from updated Messages ' + updatedMessages);
+	 	
 	 		io.sockets.emit('updatedMessage', newMessages);
 
 	 })	

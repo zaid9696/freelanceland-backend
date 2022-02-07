@@ -141,7 +141,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 		}
 
 		const isOrder = await Order.findById(orderId).populate('user seller', 'totalEarned');
-		console.log({isOrder});
+		
 		let order ;
 		let isUser;
 		if(isOrder.user.id.toString() === req.user.id){
@@ -235,7 +235,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 	const {active, cancelled, completed, orderId, bundle, user, deliverDate, seller} = req.body;
 
 	// const deliverDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
-	// console.log(user);
+	
 	let newOrder = await Order.create({
 		active,
 		cancelled,			

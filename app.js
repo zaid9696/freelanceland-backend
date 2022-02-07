@@ -6,8 +6,7 @@ const cors = require('cors');
 const compression = require('compression');
 
 
-
-const AppError  = require('./utils/appError');
+const AppError  = require('./utils/AppError');
 const errorController = require('./controllers/errorController');
 const userRoutes = require('./routes/userRoutes');
 const bundleRoutes = require('./routes/bundleRoutes');

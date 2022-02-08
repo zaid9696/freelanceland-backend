@@ -23,9 +23,11 @@ const createToken = (user, statusCode, req, res) => {
 	
 
 	const cookieOptions = {
+		
 		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
 		httpOnly: true,
 		sameSite: 'none',
+		domain: process.env.URL_PATH,
 		secure: true
 	}
 
@@ -161,6 +163,8 @@ exports.logout = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
 
 		let token;
+
+		console.log({cookTest: req.cookies.jwt});
 		
 		if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
 

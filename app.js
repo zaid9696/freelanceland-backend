@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const helmet = require("helmet");
 const cors = require('cors');
 const compression = require('compression');
 
@@ -25,7 +26,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(morgan('dev'));
 
+app.use(helmet());
+
 app.use(cookieParser());
+
+
 
 app.use((req, res, next) => {
 
@@ -39,6 +44,7 @@ app.use((req, res, next) => {
 
 const corsOptions = {
     credentials: true,
+    exposedHeaders: ['SET-COOKIE'],
    	origin: `${process.env.URL_PATH}`
  };
 

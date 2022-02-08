@@ -24,7 +24,9 @@ const createToken = (user, statusCode, req, res) => {
 
 	const cookieOptions = {
 		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-		httpOnly: true
+		httpOnly: true,
+		sameSite: 'none',
+		secure: true
 	}
 
 
@@ -95,7 +97,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
-	// console.log({Cookie:req.cookies.jwt});
+	console.log({Cookie:req.cookies.tsrce});
 	if(req.cookies.jwt){
 	
 		try {
@@ -145,7 +147,9 @@ exports.logout = catchAsync(async (req, res, next) => {
 	res.cookie('jwt', 'Logout from the site', {
 
 		expires: new Date(Date.now() + 10 * 1000),
-		httpOnly: true
+		httpOnly: true,
+		sameSite: 'none',
+		secure: true
 	});
 
 	res.status(200).json({status: 'success'});

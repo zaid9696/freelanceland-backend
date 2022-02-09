@@ -19,7 +19,10 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const offersRoutes = require('./routes/offersRoutes');
 
 
+
 const app = express();
+
+
 
 app.use('/public/images', express.static(path.join('public', 'images')));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,10 +33,17 @@ app.use(helmet());
 
 app.use(cookieParser());
 
+app.get('/', function (req, res) {
+  // Cookies that have not been signed
+  console.log('Cookies: ', req.cookies)
 
+  // Cookies that have been signed
+  console.log('Signed Cookies: ', req.signedCookies)
+})
 
 app.use((req, res, next) => {
 
+	
 	res.setHeader('Access-Control-Allow-Origin', `${process.env.URL_PATH}`);
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');

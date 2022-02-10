@@ -23,6 +23,7 @@ const createToken = (user, statusCode, req, res) => {
 
 	const cookieOptions = {
 
+
 		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
 		httpOnly: true,
 		sameSite: 'none',
@@ -117,16 +118,20 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
 			}
 
-			const user = await User.findById(tokenDecoded.id);
+			let user = await User.findById(tokenDecoded.id);
 
 			if(!user){
 				next(new AppError('The user with this token no longer exist', 401));
 			}
 
+			
+
+
 			return res.status(200).json({
 				status: 'success',
 				requestedTime: new Date().toLocaleString(),
-				user
+				user,
+				token: req.cookies.jwt
 			});
 
 		}catch(e) {
